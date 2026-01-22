@@ -1,5 +1,5 @@
 # Makefile that builds libstd using the mrustc-built rustc
-# 
+#
 #
 # Inputs: mrustc-built rustc (`rustc_m`) and cargo
 # - Step 1: Build libstd with `minicargo`
@@ -47,7 +47,7 @@ TARGETVER_LEAST_1_54 := $(shell test "$(RUSTC_VERSION)" ">" "1.54" && echo yes)
 TARGETVER_LEAST_1_74 := $(shell test "$(RUSTC_VERSION)" ">" "1.74" && echo yes)
 
 RUSTC_BINNAME := rustc_binary
-CARGO_FLAGS_rustc := 
+CARGO_FLAGS_rustc :=
 ifneq ($(TARGETVER_LEAST_1_54),)
  ifneq ($(TARGETVER_LEAST_1_74),)
   RUST_SRC_HELLO := $(RUST_SRC)tests/ui/hello.rs
@@ -93,6 +93,8 @@ CARGO_HOME := $(PREFIX)cargo_home/
 LLVM_CONFIG ?= $(RUST_SRC)build/bin/llvm-config
 LLVM_TARGETS ?= X86;ARM;AArch64#;Mips;PowerPC;SystemZ;JSBackend;MSP430;Sparc;NVPTX
 
+RUSTC_LD_LIBRARY_PATH ?= $(abspath $(LIBDIR))
+
 RUSTC_ENV_VARS := CFG_COMPILER_HOST_TRIPLE=$(RUSTC_TARGET)
 RUSTC_ENV_VARS += LLVM_CONFIG=$(abspath $(LLVM_CONFIG))
 RUSTC_ENV_VARS += CFG_RELEASE=$(RUSTC_VERSION)	# Claiming stable
@@ -100,17 +102,19 @@ RUSTC_ENV_VARS += CFG_RELEASE_CHANNEL=$(RUSTC_CHANNEL)
 RUSTC_ENV_VARS += CFG_VERSION=$(RUSTC_VERSION)-stable-mrustc
 RUSTC_ENV_VARS += CFG_PREFIX=mrustc
 RUSTC_ENV_VARS += CFG_LIBDIR_RELATIVE=lib
-RUSTC_ENV_VARS += LD_LIBRARY_PATH=$(abspath $(LIBDIR))
+RUSTC_ENV_VARS += LD_LIBRARY_PATH=$(RUST_LD_LIBRARY_PATH)
 RUSTC_ENV_VARS += REAL_LIBRARY_PATH_VAR=LD_LIBRARY_PATH
 RUSTC_ENV_VARS += RUSTC_INSTALL_BINDIR=bin
 RUSTC_ENV_VARS += RUSTC_ERROR_METADATA_DST=$(abspath $(PREFIX))
 
 CARGO_FLAGS := --target $(RUSTC_TARGET) -j $(PARLEVEL) --release --verbose
 
+RUST_FLAGS ?= -Z force-unstable-if-unmarked -C link_args=-Wl,-rpath,\$$ORIGIN/../lib
+
 CARGO_ENV := CFG_COMPILER_HOST_TRIPLE=$(RUSTC_TARGET)
 CARGO_ENV += RUSTC_BOOTSTRAP=1
 CARGO_ENV += CARGO_HOME=$(CARGO_HOME)
-CARGO_ENV += RUSTFLAGS="-Z force-unstable-if-unmarked -C link_args=-Wl,-rpath,\$$ORIGIN/../lib"
+CARGO_ENV += RUSTFLAGS="$(RUST_FLAGS)"
 
 fn_opt_copy = (test -e "$2" && test ! "$1" -nt "$2") || cp "$1" "$2"
 
