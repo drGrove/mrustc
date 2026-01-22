@@ -2197,7 +2197,7 @@ namespace {
                     // Leading & external tag: repr(C)
                     assert(union_fields.size() + 1 == repr->fields.size());
                     assert( is_enum_tag(repr, repr->fields.size()-1) );
-                    
+
                     assert( repr->fields.back().offset == 0 );
                     DEBUG("Tag present at offset " << repr->fields.back().offset << " - " << repr->fields.back().ty);
 
@@ -4959,7 +4959,7 @@ namespace {
             else if( matches_template("xrelease; lock; xaddq $2, $1", /*input=*/{"0"}, /*output=*/{"=r", "+*m"}) )
             {
                 m_of << indent;
-                emit_lvalue(e.outputs[0].second); m_of << " = "; 
+                emit_lvalue(e.outputs[0].second); m_of << " = ";
                 m_of << "InterlockedExchangeAddRelease64(";
                 emit_lvalue(e.outputs[1].second); m_of << ",";
                 emit_lvalue(e.inputs[0].second);
@@ -5165,7 +5165,7 @@ namespace {
             auto indent = RepeatLitStr{ "\t", static_cast<int>(indent_level) };
             Asm2TplMatch    m { mir_res, stmt };
 
-            if( stmt.as_Asm2().lines.empty() ) 
+            if( stmt.as_Asm2().lines.empty() )
             {
                 // Ignore?
             }
@@ -5479,6 +5479,10 @@ namespace {
                         // https://gcc.gnu.org/onlinedocs/gcc/Machine-Constraints.html
                         switch(c)
                         {
+                        // AArch64
+                        case AsmCommon::RegisterClass::aarch64_reg: m_of << "r"; break;
+                        case AsmCommon::RegisterClass::aarch64_vreg: m_of << "w"; break;
+                        // case AsmCommon::RegisterClass::aarch64_vreg_low16: m_of << "x"; break;
                         // x86
                         case AsmCommon::RegisterClass::x86_reg: m_of << "r";   break;
                         case AsmCommon::RegisterClass::x86_reg_abcd: m_of << "Q";   break;
@@ -5520,6 +5524,9 @@ namespace {
                         TU_ARMA(Class, c)
                             switch(c)
                             {
+                            // AArch64
+                            case AsmCommon::RegisterClass::aarch64_reg: m_of << "r"; break;
+                            case AsmCommon::RegisterClass::aarch64_vreg: m_of << "w"; break;
                             // x86
                             case AsmCommon::RegisterClass::x86_reg: m_of << "r";   break;
                             case AsmCommon::RegisterClass::x86_reg_abcd: m_of << "Q";   break;
@@ -7519,7 +7526,7 @@ namespace {
 
         /// slot :: The value to drop
         /// ty :: Type of value to be dropped
-        /// unsized_valid :: 
+        /// unsized_valid ::
         /// indent_level :: (formatting) Current amount of indenting
         void emit_destructor_call(const ::MIR::LValue& slot, const ::HIR::TypeRef& ty, bool unsized_valid, unsigned indent_level)
         {

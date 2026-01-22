@@ -469,6 +469,13 @@ namespace
                 ARCH_ARM64
                 };
         }
+        else if(target_name == "aarch64-linux-musl" || target_name == "aarch64-unknown-linux-musl")
+        {
+            return TargetSpec {
+                "unix", "linux", "musl", {CodegenMode::Gnu11, false, "aarch64-linux-musl", BACKEND_C_OPTS_GNU},
+                ARCH_ARM64
+                };
+        }
         else if(target_name == "m68k-linux-gnu" || target_name == "m68k-unknown-linux-gnu")
         {
             return TargetSpec {
@@ -1047,7 +1054,7 @@ namespace {
         return a.align != b.align ? a.align < b.align : a.size < b.size;
     }
     /// Generate a struct representation using the provided entries
-    /// 
+    ///
     /// - Handles (optional) sorting and packing
     ::std::unique_ptr<TypeRepr> make_type_repr_struct__inner(const Span&sp, const ::HIR::TypeRef& ty, ::std::vector<Ent>& ents, StructSorting sorting, unsigned forced_alignment, unsigned max_alignment)
     {
@@ -1619,7 +1626,7 @@ namespace {
                         // DISABLED: This doesn't work properly
                         // - Downstream assumes `NonZero` means that one element is zero-sized
                         // - Calling `Target_GetTypeRepr` generates the variant early - too lazy to reimplement logic
-                        #if 0  
+                        #if 0
                         else if( min_size < max_size )
                         {
                             unsigned big_var = (sizes[0] == max_size ? 0 : 1);

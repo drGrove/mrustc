@@ -39,32 +39,32 @@ namespace AsmCommon {
         //x86_mm, // Requires
         x86_kreg,
 
-        //aarch64_reg,
-        //aarch64_vreg,
-        
+        aarch64_reg,
+        aarch64_vreg,
+
         //arm_reg,
         //arm_sreg,
         //arm_dreg,
         //arm_qreg,
-        
+
         //mips_reg,
         //mips_freg,
-        
+
         //nvptx_reg16,
         //nvptx_reg32,
         //nvptx_reg64,
-        
+
         riscv_reg,
         riscv_freg,
-        
+
         //hexagon_reg,
-        
+
         //powerpc_reg,
         //powerpc_reg_nonzero,
         //powerpc_freg,
-        
+
         //wasm32_local,
-        
+
         //bpf_reg,
         //bpf_wreg,
     };
@@ -99,6 +99,8 @@ namespace AsmCommon {
     static inline const char* to_string(const RegisterClass& c) {
         switch(c)
         {
+        case RegisterClass::aarch64_reg:  return "reg";
+        case RegisterClass::aarch64_vreg: return "vreg";
         case RegisterClass::x86_reg:    return "reg";
         case RegisterClass::x86_reg_abcd:   return "reg_abcd";
         case RegisterClass::x86_reg_byte:   return "reg_byte";
@@ -128,7 +130,7 @@ namespace AsmCommon {
 
         unsigned    index;
         char    modifier;
-        
+
         LineFragment()
             : index(UINT_MAX)
             , modifier('\0')
